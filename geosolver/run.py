@@ -16,7 +16,6 @@ from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula import ground_formulas
 from geosolver.grounding.parse_match_formulas import parse_match_formulas
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
-from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype
 from geosolver.ontology.ontology_semantics import evaluate, Equals
 from geosolver.solver.solve import solve
 from geosolver.text.augment_formulas import augment_formulas
@@ -576,8 +575,6 @@ def data_stat(query):
     print "LEXICON"
     for key, s in tag_model.lexicon.iteritems():
         print "%s: %s" % ("_".join(key), ", ".join(" ".join(ss) for ss in s))
-
-
 
 
 if __name__ == "__main__":

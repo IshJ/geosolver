@@ -50,6 +50,8 @@ def train_tag_model(syntax_parses, annotations):
                               for annotation in annotations[pk][number].values()]
             assert isinstance(syntax_parse, SyntaxParse)
             local_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
+            # print "local_tag_rules" , pk 
+            # print(local_tag_rules)
             tm.update(local_tag_rules)
     return tm
 
@@ -59,12 +61,21 @@ def train_semantic_model(tm, syntax_parses, annotations):
     ism = RFIsModel()
     ccm = NaiveCCModel(3)
 
+    print "length syntax_parses:", len(syntax_parses)
     for pk, local_syntax_parses in syntax_parses.iteritems():
         print "training:", pk
         for number, syntax_parse in local_syntax_parses.iteritems():
             assert isinstance(syntax_parse, SyntaxParse)
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in annotations[pk][number].values()]
+            
+            for semantic_tree in semantic_trees:
+                print semantic_tree.get_unary_rules();
+            print "#######"   
+            for semantic_tree in semantic_trees:
+                print semantic_tree.get_binary_rules();
+
+
             # local_tag_rules = set(itertools.chain(*[t.get_tag_rules() for t in semantic_trees]))
             local_tag_rules = tm.generate_tag_rules(syntax_parse)
             local_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
@@ -260,10 +271,11 @@ def test_rule_model():
     plt.show()
 
 def test_opt_model():
-    query = 'test'
+    query = '2'
     all_questions = geoserver_interface.download_questions(query)
     all_syntax_parses = questions_to_syntax_parses(all_questions)
     all_annotations = geoserver_interface.download_semantics(query)
+    # print(all_annotations)
     all_labels = geoserver_interface.download_labels(query)
 
     (tr_s, tr_a, tr_q), (te_s, te_a, te_q) = split([all_syntax_parses, all_annotations, all_questions], 0.5)

@@ -30,18 +30,25 @@ def annotation_to_semantic_tree(syntax_parse, annotation_string):
         local_span = c[1]
         children = c[2:]
         type_, s = c[0]
+        # print 'words ', words
+        # print 'a#b#c', a, '#', b, '#', c
         name = "_".join(words[idx] for idx in range(*local_span))
-        if s in signatures:
+        # print 'name',name
+        if s in signatures:            
             signature = signatures[s]
+            # print 'name signature', signature
         elif type_ == 'function' and len(children) == 0:
             # Constant number
             signature = FunctionSignature(name, 'number', [], name=name)
+            # print 'function signature', signature
         elif type_ == 'variable' and len(children) == 0:
             signature = VariableSignature((local_span, s), s, name=name)
+            # print 'variable signature', signature
         else:
             raise Exception("local span: %r, children: %r, type: %r, s: %r"
                             % (local_span, children, type_, s))
         content = TagRule(syntax_parse, local_span, signature)
+        # print 'content', content
         return SemanticTreeNode(content, children)
 
     current = Word(alphanums)
@@ -52,6 +59,8 @@ def annotation_to_semantic_tree(syntax_parse, annotation_string):
     expr << (tag + Optional(Literal("(").suppress() + expr +
                            ZeroOrMore(Literal(",").suppress() + expr) + Literal(")").suppress()))
     tokens = expr.setParseAction(expr_f).parseString(annotation_string)
+    # print 'annotation_string', annotation_string
+    # print 'tokens', tokens
     return tokens[0]
 
 def is_valid_annotation(syntax_parse, annotation_string):

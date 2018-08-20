@@ -1,4 +1,5 @@
 import cv2
+import cv2.cv as cv
 import numpy as np
 
 from geosolver.diagram.states import ImageSegmentParse, PrimitiveParse
@@ -44,7 +45,7 @@ def _get_lines(image_segment, params):
 
 def _get_circles(image_segment, params):
 
-    temp = cv2.HoughCircles(image_segment.segmented_image, cv2.HOUGH_GRADIENT, params.dp, params.minDist,
+    temp = cv2.HoughCircles(image_segment.segmented_image, cv.CV_HOUGH_GRADIENT, params.dp, params.minDist,
                             param1=params.param1, param2=params.param2,
                             minRadius=params.minRadius, maxRadius=params.maxRadius)
     if temp is None:

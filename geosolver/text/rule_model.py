@@ -98,6 +98,8 @@ class NaiveTagModel(TagModel):
         for tag_rule in tag_rules:
             entry = (tag_rule.signature.return_type, tag_rule.signature.name)
             self.lexicon[tag_rule.get_words()].add(entry)
+            print 'tag_rule.get_words', tag_rule.get_words()
+            # print 'lexicon#', self.lexicon 
 
     def fit(self):
         pass
@@ -171,6 +173,10 @@ class NaiveTagModel(TagModel):
                         signature = VariableSignature((span,return_type), return_type, name=name)
                     tag_rule = TagRule(syntax_parse, span, signature)
                     tag_rules.add(tag_rule)
+        print 'tag rules'
+        for tag_rule1 in tag_rules:
+            print tag_rule1, "#",    
+        print ';)'             
         return tag_rules
 
     def print_lexicon(self):
@@ -408,6 +414,8 @@ class RFUnaryModel(UnaryModel):
 
     def fit(self):
         print "Fitting %s:" % self.__class__.__name__
+        print "positive_unary_rules", self.positive_unary_rules
+        print "negative_unary_rules", self.negative_unary_rules
         print "# of positive examples:", len(self.positive_unary_rules)
         print "# of negative examples:", len(self.negative_unary_rules)
         self.feature_function = UnaryFeatureFunction(self.positive_unary_rules + self.negative_unary_rules)
@@ -425,7 +433,7 @@ class RFUnaryModel(UnaryModel):
         cw = {0: len(self.positive_unary_rules), 1: len(self.negative_unary_rules)}
         # self.classifier = RandomForestClassifier(class_weight='auto', n_estimators=30) # RandomForestClassifier()
         # self.classifier = SVC(probability=True, class_weight='auto')
-        self.classifier = LogisticRegression(class_weight='auto')
+        self.classifier = LogisticRegression(class_weight='balanced')
         self.classifier.fit(X, y)
 
     def get_score(self, ur):
@@ -479,7 +487,7 @@ class RFCoreModel(BinaryModel):
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
         # self.classifier = self.classifier_class(class_weight='auto', n_estimators=30)
         # self.classifier = SVC(probability=True, class_weight='auto')
-        self.classifier = LogisticRegression(class_weight='auto')
+        self.classifier = LogisticRegression(class_weight='balanced')
         self.classifier.fit(X, y)
 
     def get_score(self, br):
@@ -523,7 +531,7 @@ class RFIsModel(RFCoreModel):
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
         # self.classifier = self.classifier_class(class_weight='auto', n_estimators=30)
         # self.classifier = SVC(probability=True, class_weight='auto')
-        self.classifier = LogisticRegression(class_weight='auto')
+        self.classifier = LogisticRegression(class_weight='balanced')
         self.classifier.fit(X, y)
 
 
@@ -566,7 +574,7 @@ class RFCCModel(RFCoreModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
-        self.classifier = self.classifier_class(class_weight='auto')
+        self.classifier = self.classifier_class(class_weight='balanced')
         # self.classifier = SVC(probability=True, class_weight='auto')
         # self.classifier = LogisticRegression(class_weight='auto')
         self.classifier.fit(X, y)

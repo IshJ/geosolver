@@ -213,9 +213,17 @@ def signed_distance_between_cartesian_angles(a0, a1):
         distance += 2*np.pi
     return distance
 
-
 def arc_midpoint(arc):
     circle = arc.circle
+    radius = circle.radius
+    caa = cartesian_angle(circle.center, arc.a)
+    cab = cartesian_angle(circle.center, arc.b)
+    cam = caa + signed_distance_between_cartesian_angles(caa, cab)/2.0
+    mp = instantiators['point'](radius*np.cos(cam), radius*np.sin(cam))
+    return mp
+
+def arc_midpoint123(arc):
+    circle = arc.circles
     radius = circle.radius
     caa = cartesian_angle(circle.center, arc.a)
     cab = cartesian_angle(circle.center, arc.b)

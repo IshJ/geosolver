@@ -1,0 +1,25 @@
+export PYTHONPATH="${PYTHONPATH}:/home/ishadi/Documents/masters/geosolver"
+python manage.py runserver --settings=geoserver.settings.local
+
+stanford
+masters/lib/standford-parser-server-master run.sh
+
+
+http://localhost:9000/dep?k=1&paragraph=%27In%20circle%20O%20,%20diameter%20AB%20is%20perpendicular%20to%20chord%20CD%20at%20E%20.%27&words=%27In+circle+O+,+diameter+AB+is+perpendicular+to+chord+CD+at+E+.%27
+
+export PYTHONPATH="${PYTHONPATH}:/home/ishadi/Documents/masters/GeoServer"
+
+export PYTHONPATH="${PYTHONPATH}:/home/ishadi/Documents/masters/EquationTree"
+
+
+ishadi@ishadi-Vostro-3559:~/Documents/masters/GeoServer/geoserver$ echo "$http_proxy"
+http://cache.mrt.ac.lk:3128/
+ishadi@ishadi-Vostro-3559:~/Documents/masters/GeoServer/geoserver$ echo "$https_proxy"
+https://cache.mrt.ac.lk:3128/
+ishadi@ishadi-Vostro-3559:~/Documents/masters/GeoServer/geoserver$
+
+
+
+
+
+

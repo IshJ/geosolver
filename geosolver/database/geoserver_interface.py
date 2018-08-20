@@ -5,6 +5,8 @@ import tempfile
 import urllib
 import urlparse
 import requests
+import io
+from PIL import Image
 from geosolver import settings
 from geosolver.database.states import Question
 
@@ -29,7 +31,7 @@ class GeoserverInterface(object):
         sub_url = "/questions/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, sub_url)
         print "accessing: %s" % request_url
-        r = requests.get(request_url)
+        r = requests.get(request_url, timeout=15)
         data = json.loads(r.text, object_hook=_decode_dict)
         questions = {}
         for pair in data:
@@ -40,7 +42,14 @@ class GeoserverInterface(object):
                 temp_dir = tempfile.mkdtemp()
                 temp_name = os.path.basename(urlparse.urlparse(diagram_url).path)
                 temp_filepath = os.path.join(temp_dir, temp_name)
-                urllib.urlretrieve(diagram_url, temp_filepath)
+
+                response = requests.get( diagram_url )
+                image = Image.open(io.BytesIO(response.content))
+                # image.thumbnail( ( 200,200 ), Image.ANTIALIAS )
+                image.save( temp_filepath, optimize=True )
+
+
+                # urllib.urlretrieve(diagram_url, temp_filepath)
             choice_words = {int(number): {int(index): word for index, word in words.iteritems()} for number, words in pair['choice_words'].iteritems()}
             choices = {int(number): text for number, text in pair['choices'].iteritems()}
             sentence_expressions ={int(number): {index: expr for index, expr in exprs.iteritems()} for number, exprs in pair['sentence_expressions'].iteritems()}

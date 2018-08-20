@@ -120,6 +120,11 @@ class StanfordDependencyParser(SyntaxParser):
     """
     def __init__(self, server_url):
         self.server_url = server_url
+        self.props = {
+            'annotators': 'tokenize,ssplit,pos,lemma,ner,parse,depparse,dcoref,relation',
+            'pipelineLanguage': 'en',
+            'outputFormat': 'json'
+        }
 
     def get_syntax_parses(self, words, k, unique=True, parser=True):
         # FIXME : this should be fixed at geoserver level
@@ -130,7 +135,11 @@ class StanfordDependencyParser(SyntaxParser):
         sentence = [words[index] for index in sorted(words.keys())]
         neutral_sentence = [_neutralize(word) for word in sentence]
         params = {'words': '+'.join(neutral_sentence), 'k': k, 'paragraph': ' '.join(neutral_sentence)}
-        r = requests.get(self.server_url, params=params)
+        # print(params)
+
+        r = requests.get(self.server_url, params=params, data = 'In circle O , diameter AB is perpendicular to chord CD at E .')
+        # print('received data:'),
+        # print(r.text)        
         data = r.json()
         trees = []
 
@@ -153,7 +162,6 @@ class StanfordDependencyParser(SyntaxParser):
                     graph.node[to]['label'] = "%s-%d" % (words[to], to)
                     graph.node[to]['word'] = words[to]
                     graph.node[to]['tag'] = to_tag
-
             if unique and not any(_match_trees(syntax_tree.directed, graph) for syntax_tree in trees):
                 tree = SyntaxParse(words, graph, graph.to_undirected(), rank, score)
                 trees.append(tree)
